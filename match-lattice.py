@@ -154,7 +154,7 @@ def scan(theta, tol=1e-3):
     return matches[:25]
 
 
-def run(tolerance):
+def run(tolerance, outfile):
     angles = np.linspace(0, 30, 3001)
     results = []
     for ang in tqdm(angles, colour="magenta"):
@@ -166,7 +166,8 @@ def run(tolerance):
             results.append(r)
 
     df = pl.DataFrame(results)
-    df.write_csv("results.csv")
+    df.write_csv(outfile)
+    print(f"Stored results in {outfile}")
 
 
 if __name__ == "__main__":
