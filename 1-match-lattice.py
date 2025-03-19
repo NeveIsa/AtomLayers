@@ -80,8 +80,10 @@ from tqdm import tqdm
 import polars as pl
 from fire import Fire
 
+from tools import tool
 
-def scan(A, G, theta, tol, xlim=(0, 50), ylim=(0, 50)):
+
+def scan(A, G, theta, tol, xlim=(-20, 20), ylim=(-20, 20)):
     theta = theta * np.pi / 180  # convert to radians
     # create rotation by theta matrix R
     R = np.array(
@@ -154,16 +156,7 @@ def run(firstlayer, secondlayer, outfile, tolerance=0.0001):
     # create the change of basis matrix G for top layer (change from Gamma to Iota)
     # G = np.vstack(np.array([g1, g2])).T
 
-    # Load A and G from vasp file
-    ### first layer
-    a1 = np.loadtxt(firstlayer, skiprows=2, max_rows=1)[:2]
-    a2 = np.loadtxt(firstlayer, skiprows=3, max_rows=1)[:2]
-    A = np.array([a1, a2]).T
-    ### second layer
-    g1 = np.loadtxt(secondlayer, skiprows=2, max_rows=1)[:2]
-    g2 = np.loadtxt(secondlayer, skiprows=3, max_rows=1)[:2]
-    G = np.array([g1, g2]).T
-
+    A, G = tool.load_layer_bases(firstlayer, secondlayer)
     # print("A\n", A)
     # print("G\n", G)
 

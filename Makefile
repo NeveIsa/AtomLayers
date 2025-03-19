@@ -1,8 +1,11 @@
+all: match .WAIT select
+
 match:
-	python 1-match-lattice.py --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --outfile=results/layer12.csv 
-	cat results/layer12.csv | grep 22.62
+	python 1-match-lattice.py --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --outfile=results/layer12matches.csv 
+	# cat results/layer12matches.csv | grep 22.62
+	
 select:
-	python 2-select.py --matchcsv=results/layer12.csv
+	python 2-select.py  --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --matchcsv=results/layer12matches.csv --outfile=results/layer12matches_with_stable_basis.csv
 
 format:
 	python -m ruff format .
@@ -15,3 +18,6 @@ git:
 	git add .
 	git commit -m auto_commit
 	git push
+
+clean:
+	rm -r results/*.csv
