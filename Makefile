@@ -6,6 +6,7 @@ match:
 	
 select:
 	python 2-select.py  --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --matchcsv=results/layer12matches.csv --outfile=results/layer12matches_with_stable_basis.csv
+	echo ""; bat results/layer12matches_with_stable_basis.csv || cat results/layer12matches_with_stable_basis.csv
 
 format:
 	python -m ruff format .
