@@ -81,27 +81,11 @@ import pandas as pd
 import polars as pl
 from fire import Fire
 
-# bottom layer (Alpha coordinate system) with respect to (wrt) the standard basis (Iota) 
-a1, a2 = [3.99, 0], [0, 3.99]
-# create the change of basis matrix A for bottom layer (change from Alpha to Iota)
-A = np.vstack(np.array([a1, a2])).T
-
-
-# basis top layer (Gamma coordinate system) with respect to standard basis (Iota)
-g1, g2 = [3.99, 0], [0, 3.99]
-# create the change of basis matrix G for top layer (change from Gamma to Iota)
-G = np.vstack(np.array([g1, g2])).T
-
-
-
-# grid limits to search
-xlim = (0, 50) # x grid limits
-ylim = (0, 50) # y grid limits
 
 
 
 
-def scan(theta, tol=1e-3):
+def scan(A, G, theta, tol, xlim=(0, 50), ylim=(0, 50) ):
     theta = theta * np.pi / 180  # convert to radians
 # create rotation by theta matrix R
     R = np.array(
@@ -154,13 +138,37 @@ def scan(theta, tol=1e-3):
     return matches[:25]
 
 
-def run(tolerance, outfile):
+def run(firstlayer, secondlayer, tolerance=0.001, outfile="results.csv"):
+    # bottom layer (Alpha coordinate system) with respect to (wrt) the standard basis (Iota) 
+    #a1, a2 = [3.99, 0], [0, 3.99]
+    # create the change of basis matrix A for bottom layer (change from Alpha to Iota)
+    #A = np.vstack(np.array([a1, a2])).T
+
+
+    # basis top layer (Gamma coordinate system) with respect to standard basis (Iota)
+    #g1, g2 = [3.99, 0], [0, 3.99]
+    # create the change of basis matrix G for top layer (change from Gamma to Iota)
+    #G = np.vstack(np.array([g1, g2])).T
+
+    # Load A and G from vasp file
+    ### first layer
+    a1 = np.loadtxt(firstlayer, skiprows=2, max_rows=1)[:2]
+    a2 = np.loadtxt(firstlayer, skiprows=3, max_rows=1)[:2]
+    A = np.array([a1,a2])
+    ### second layer
+    g1 = np.loadtxt(secondlayer, skiprows=2, max_rows=1)[:2]
+    g2 = np.loadtxt(secondlayer, skiprows=3, max_rows=1)[:2]
+    G = np.array([g1,g2]).T
+
+    print("A\n",A)
+    print("G\n",G)
+    
     angles = np.linspace(0, 30, 3001)
     results = []
     for ang in tqdm(angles, colour="magenta"):
         if ang == 0:
             continue
-        res = scan(ang, tol = tolerance)
+        res = scan(ang, tol = tolerance, A=A, G=G)
         for r in res:
             r.update({"angle":ang})
             results.append(r)
