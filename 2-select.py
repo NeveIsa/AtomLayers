@@ -2,7 +2,7 @@ import polars as pl
 import numpy as np
 from fire import Fire
 
-from tools.tool import load_layer_bases
+from tools.tool import load_layer_basis
 
 
 def angle_in_degrees(vec1, vec2):
@@ -25,7 +25,8 @@ def main(
 ):
     matches_with_good_basis = []
 
-    A, G = load_layer_bases(firstlayer, secondlayer)
+    A = load_layer_basis(firstlayer)
+    G = load_layer_basis(secondlayer)
 
     df = pl.read_csv(matchcsv)
     angles = df["angle"].unique()

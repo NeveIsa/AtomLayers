@@ -1,6 +1,9 @@
-all: match .WAIT select
+all: match1 .WAIT select .WAIT match3
 
-match:
+match3:
+	python 3-match-third.py vaspfiles/bto.vasp results/layer12matches_with_stable_basis.csv --outdir=results/layer3matches
+
+match1:
 	python 1-match-lattice.py --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --outfile=results/layer12matches.csv 
 	# cat results/layer12matches.csv | grep 22.62
 	
