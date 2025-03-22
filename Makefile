@@ -1,15 +1,28 @@
+# global vars
+TOL1 := 0.00001 
+TOL3 := 0.00001
+
+RESULTSDIR := results
+OUTFILE1 := $(RESULTSDIR)/layer12matches.csv 
+OUTFILE2 := $(RESUTLSDIR)/layer12matches_with_stable_basis.csv 
+OUTDIR3  := $(RESULTSDIR)/layer3matches
+
+VASPFILE1 := vaspfiles/bto.vasp 
+
 all: match1 .WAIT select .WAIT match3
 
-match3:
-	python 3-match-third.py vaspfiles/bto.vasp results/layer12matches_with_stable_basis.csv --outdir=results/layer3matches
-
 match1:
-	python 1-match-lattice.py --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --outfile=results/layer12matches.csv 
-	# cat results/layer12matches.csv | grep 22.62
+	python 1-match-lattice.py --firstlayer=$(VASPFILE1) --secondlayer=$(VASPFILE1) --tolerance=$(TOL1) --outfile=$(OUTFILE1)
+	# cat $(OUTFILE1) | grep 22.62
+
+select2:
+	python 2-select.py  --firstlayer=$(VASPFILE1) --secondlayer=$(VASPFILE1) --matchcsv=$(OUTFILE1) --outfile=$(OUTFILE2)
+	echo ""; bat $(OUTFILE2) || cat $(OUTFILE2)
+
+match3:
+	python 3-match-third.py --firstlayer=$(VASPFILE1) $(OUTFILE2) --tolerance=$(TOL3) --outdir=$(OUTDIR3)
+	bat $(OUTDIR3)/*.csv || cat $(OUTDIR3)/*.csv   
 	
-select:
-	python 2-select.py  --firstlayer=vaspfiles/bto.vasp --secondlayer=vaspfiles/bto.vasp --matchcsv=results/layer12matches.csv --outfile=results/layer12matches_with_stable_basis.csv
-	echo ""; bat results/layer12matches_with_stable_basis.csv || cat results/layer12matches_with_stable_basis.csv
 
 format:
 	python -m ruff format .
@@ -24,4 +37,5 @@ git:
 	git push
 
 clean:
-	rm -r results/*.csv
+	rm -r $(RESUTLSDIR)/*.csv
+	rm -r $(OUTDIR3)/*.csv

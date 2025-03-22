@@ -79,7 +79,7 @@ from tqdm import tqdm
 
 import polars as pl
 
-from tools import tool
+from icecream import ic
 
 
 def scan(A, G, theta, tol, xlim=(-20, 20), ylim=(-20, 20)):
@@ -152,7 +152,7 @@ def scan(A, G, theta, tol, xlim=(-20, 20), ylim=(-20, 20)):
 def run(A, G, tolerance):
     angles = np.linspace(0, 30, 3001)
     results = []
-    for ang in tqdm(angles, colour="magenta"):
+    for ang in tqdm(angles, colour="red", leave=False):
         if ang == 0:
             continue
         res = scan(A, G, ang, tol=tolerance)

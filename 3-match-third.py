@@ -5,22 +5,25 @@ from fire import Fire
 import numpy as np
 from tqdm import tqdm
 from pathlib import Path
+from icecream import ic
 
 
-def main(firstlayer, priormatches, outdir):
+def main(firstlayer, priormatches, tolerance, outdir):
     A = load_layer_basis(firstlayer)
-    df = pl.read_csv(priormatches)
+    pmatchdf = pl.read_csv(priormatches)
 
-    nrows = len(df)
+    nrows = len(pmatchdf)
     for i in tqdm(range(nrows)):
-        row = df[i]
-        v1 = row["v1x"], row["v1y"]
-        v2 = row["v2x"], row["v2y"]
+        row = pmatchdf[i]
+        # ic(row)
+
+        v1 = row["v1x"][0], row["v1y"][0]
+        v2 = row["v2x"][0], row["v2y"][0]
         G = np.array([v1, v2]).T
 
-        df = run(A, G, tolerance=1e-4)
+        outdf = run(A, G, tolerance=tolerance)
         outfile = Path(outdir) / f"{i}.py"
-        df.write_csv(outfile)
+        outdf.write_csv(outfile)
 
 
 if __name__ == "__main__":

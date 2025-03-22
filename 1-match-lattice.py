@@ -3,7 +3,7 @@ from fire import Fire
 from tools.tool import load_layer_basis
 
 
-def main(firstlayer, secondlayer, outfile, tolerance=0.0001):
+def main(firstlayer, secondlayer, outfile, tolerance):
     # bottom layer (Alpha coordinate system) with respect to (wrt) the standard basis (Iota)
     # a1, a2 = [3.99, 0], [0, 3.99]
     # create the change of basis matrix A for bottom layer (change from Alpha to Iota)
