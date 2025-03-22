@@ -22,7 +22,7 @@ def main(firstlayer, priormatches, tolerance, outdir):
         G = np.array([v1, v2]).T
 
         outdf = run(A, G, tolerance=tolerance)
-        outfile = Path(outdir) / f"{i}.py"
+        outfile = Path(outdir) / f"{i}.csv"
         outdf.write_csv(outfile)
 
 
