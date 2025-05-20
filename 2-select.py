@@ -2,31 +2,20 @@ import polars as pl
 import numpy as np
 from fire import Fire
 
-from tools.tool import load_layer_basis
-
-
-def angle_in_degrees(vec1, vec2):
-    v1 = vec1 / np.linalg.norm(vec1)
-    v2 = vec2 / np.linalg.norm(vec2)
-    dot = v1 @ v2
-    dot = np.clip(
-        dot, -1, 1
-    )  # sometimes it goes above 1 or below -1, need to clip for np.acos to work
-    rad = np.acos(dot)
-    return np.degrees(rad)
+from tools.tool import load_layer_basis,angle_in_degrees
 
 
 def main(
     matchcsv,
     firstlayer,
-    secondlayer,
+    #secondlayer,
     outfile,
     good_basis_angles=[90, 60],
 ):
     matches_with_good_basis = []
 
     A = load_layer_basis(firstlayer)
-    G = load_layer_basis(secondlayer)
+    #G = load_layer_basis(secondlayer)
 
     df = pl.read_csv(matchcsv)
     angles = df["angle"].unique()

@@ -16,13 +16,17 @@ match1:
 	# cat $(OUTFILE1) | grep 22.62
 
 select2:
-	python 2-select.py  --firstlayer=$(VASPFILE1) --secondlayer=$(VASPFILE1) --matchcsv=$(OUTFILE1) --outfile=$(OUTFILE2)
+	#python 2-select.py  --firstlayer=$(VASPFILE1) --secondlayer=$(VASPFILE1) --matchcsv=$(OUTFILE1) --outfile=$(OUTFILE2)
+	python 2-select.py  --firstlayer=$(VASPFILE1) --matchcsv=$(OUTFILE1) --outfile=$(OUTFILE2)
 	echo ""; bat $(OUTFILE2) || cat $(OUTFILE2)
 
 match3:
 	python 3-match-third.py --firstlayer=$(VASPFILE1) $(OUTFILE2) --tolerance=$(TOL3) --outdir=$(OUTDIR3)
 	bat $(OUTDIR3)/*.csv || cat $(OUTDIR3)/*.csv   
 	
+select4:
+	python 2-select.py --matchcsv=results/layer3matches/0.csv --firstlayer=vaspfiles/bto.vasp --outfile=$(OUTDIR3)/0-good-basis.csv
+	python 2-select.py --matchcsv=results/layer3matches/1.csv --firstlayer=vaspfiles/bto.vasp --outfile=$(OUTDIR3)/1-good-basis.csv
 
 format:
 	python -m ruff format .
