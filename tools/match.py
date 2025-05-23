@@ -82,7 +82,7 @@ import polars as pl
 from icecream import ic
 
 
-def scan(A, G, theta, tol, xlim=(-20, 20), ylim=(-20, 20)):
+def scan(A, G, theta, tol, xlim=(-500, 500), ylim=(-500, 500)):
     theta = theta * np.pi / 180  # convert to radians
     # create rotation by theta matrix R
     R = np.array(
