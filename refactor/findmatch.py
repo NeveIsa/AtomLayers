@@ -7,9 +7,9 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import numpy as np
-    from match import run_and_filter
+    from match import run_and_filter, run, filtermatches
     from tool import angle_in_degrees
-    return np, run_and_filter
+    return np, run, run_and_filter
 
 
 @app.cell
@@ -48,8 +48,8 @@ def _(results):
 
 
 @app.cell
-def _(df):
-    df
+def _(a1, a2, g1, g2, run):
+    run(a1,a2,g1,g2,degmin=0,degmax=30,degstep=0.01,nmin=-20,nmax=20,dtol=1e-4)
     return
 
 
