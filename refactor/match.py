@@ -81,8 +81,10 @@ import polars as pl
 
 from icecream import ic
 
+#from tool import angle_in_degrees
 
-def scan(A, G, theta, tol, xlim=(-500, 500), ylim=(-500, 500)):
+
+def scan(A, G, theta, tol, xlim, ylim):
     theta = np.deg2rad(theta)  # convert to radians
     # create rotation by theta matrix R
     R = np.array(
@@ -151,16 +153,66 @@ def scan(A, G, theta, tol, xlim=(-500, 500), ylim=(-500, 500)):
     return matches[:25]
 
 
-def run(A, G, tolerance):
-    angles = np.linspace(0, 30, 3001)
+def run(a1, a2, g1, g2, degmin, degmax, degstep, dtol, nmin, nmax):
+    
+    A = np.array([a1,a2])
+    G = np.array([g1,g2])
+
+    xlim = ylim = (nmin,nmax)
+    angles = np.arange(degmin,degmax,degstep)
     results = []
     for ang in tqdm(angles, colour="red", leave=False):
         if ang == 0:
             continue
-        res = scan(A, G, ang, tol=tolerance)
+        res = scan(A, G, theta=ang, xlim=xlim, ylim=ylim, tol=dtol)
         for r in res:
             r.update({"angle": ang})
             results.append(r)
 
     df = pl.DataFrame(results)
     return df
+
+
+def filtermatches(a1,a2,df,goodangle=90.0):
+    A = np.array([a1,a2]).T
+
+    results = []
+
+    for ang in df["angle"].unique():
+        angdf = df.filter(df["angle"]==ang)
+        N = angdf["n1","n2"].to_numpy()
+        
+        V = N @ A.T
+        dot =  V @ V.T
+        cos = np.cos(np.deg2rad(goodangle))
+        
+        
+        ix,iy = np.where( np.isclose(dot, cos) )
+    
+        indpairs = list(zip(ix,iy))
+
+        for p in indpairs:
+            a,b = p
+            delta = np.rad2deg(np.acos(dot[a,b])) - goodangle 
+            results.append([angdf.row(a,named=True),angdf.row(b,named=True),{"delgoodangle":delta}])
+
+    return results
+
+
+
+def run_and_filter(a1, a2, g1, g2, degmin, degmax, degstep, dtol, nmin, nmax, goodangles):
+    
+    df = run(a1, a2, g1, g2, degmin, degmax, degstep, dtol, nmin, nmax)
+    
+    allresults = []
+    
+    for good_angle in goodangles:
+        
+        results = filtermatches(a1,a2,df,good_angle)
+        
+        allresults.append({ 
+                        "goodangle":good_angle,
+                        "results": results,
+                           })
+
+    return allresults
